@@ -1,0 +1,55 @@
+FROM docker.io/debian:trixie-slim@sha256:d7e12182ce18b85b93007c1dedf31f2d29e01ccf3182cc4017c709b6259bc132
+
+ARG USER=dev
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# renovate: datasource=github-releases depName=jdx/mise
+ARG MISE_VERSION=v2026.9.2
+# renovate: datasource=github-releases depName=starship/starship
+ARG STARSHIP_VERSION=v1.26.0
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# totally nuke root access
+RUN usermod -s /usr/sbin/nologin root
+
+RUN apt-get update && \
+  apt-get install --yes --no-install-recommends \
+  ca-certificates \
+  curl \
+  fish \
+  git \
+  openssh-client && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://mise.run | \
+  MISE_INSTALL_PATH=/usr/local/bin/mise MISE_VERSION=${MISE_VERSION} MISE_QUIET=1 sh && \
+  mise --version
+
+RUN curl -fsSL https://starship.rs/install.sh | \
+  sh -s -- --yes --version ${STARSHIP_VERSION} --bin-dir /usr/local/bin && \
+  starship --version
+
+RUN useradd --create-home --user-group --shell /usr/bin/fish ${USER}
+
+USER ${USER}
+WORKDIR /home/${USER}
+
+# create directories now to avoid root ownership at runtime (devcontainer mkdir result)
+RUN mkdir -p /home/${USER}/.local/share/fish
+
+RUN mkdir -p /home/${USER}/.config/fish/conf.d && \
+  echo '/usr/local/bin/mise activate fish | source' \
+  > /home/${USER}/.config/fish/conf.d/mise.fish
+
+RUN mkdir -p /home/${USER}/.config/fish/conf.d && \
+  echo 'command -q starship; and starship init fish | source' \
+  > /home/${USER}/.config/fish/conf.d/starship.fish
+
+RUN mkdir -p /home/${USER}/.config && \
+  echo -e '[container]\ndisabled = true\n' \
+  > /home/${USER}/.config/starship.toml
+
+ENTRYPOINT ["/usr/bin/fish"]
