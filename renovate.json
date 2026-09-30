@@ -33,6 +33,18 @@
         "pinDigest"
       ],
       "automerge": true
+    },
+    {
+      "description": "Enable package version lookup for debian packages",
+      "matchFileNames": [
+        ".devcontainer/Containerfile"
+      ],
+      "matchDatasources": [
+        "deb"
+      ],
+      "registryUrls": [
+        "https://deb.debian.org/debian?suite=trixie&components=main&binaryArch=amd64"
+      ]
     }
   ]
 }
