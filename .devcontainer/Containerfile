@@ -5,7 +5,7 @@ ARG USER=dev
 ARG DEBIAN_FRONTEND=noninteractive
 
 # renovate: datasource=github-releases depName=jdx/mise
-ARG MISE_VERSION=v2026.9.14
+ARG MISE_VERSION=v2026.9.15
 # renovate: datasource=github-releases depName=starship/starship
 ARG STARSHIP_VERSION=v1.26.0
 
