@@ -25,7 +25,7 @@
 # 30 = TRUSTED - 10.0.30.0/28
 # 40 = SERVICES - 10.0.40.0/28
 # 50 = LAB - 10.0.50.0/28
-# 99 = MGMT - 10.0.99.0/29 - this device is 10.0.99.2
+# 99 = MGMT - 10.0.99.0/29 - this device is 10.0.99.3
 
 #######################################
 # Port Overview
@@ -112,7 +112,7 @@
 # This device's only address, on the mgmt VLAN, reached through the bridge.
 # Static and outside the CCR2004's mgmt-pool.
 /interface vlan add interface="br1" name="mgmt-vlan" vlan-id=99
-/ip address add interface="mgmt-vlan" address=10.0.99.2/29
+/ip address add interface="mgmt-vlan" address=10.0.99.3/29
 /ip route add gateway=10.0.99.1 comment="CCR2004"
 /ip dns set servers=10.0.99.1
 
