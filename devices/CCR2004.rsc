@@ -17,6 +17,7 @@
 # VLAN Overview
 #######################################
 
+#  2 = WAN - carried from CRS312, DHCP from ISP
 # 10 = GUEST - 10.0.10.0/27
 # 20 = IOT - 10.0.20.0/27
 # 30 = TRUSTED - 10.0.30.0/28
@@ -33,7 +34,7 @@
 /interface ethernet set [ find default-name=ether1 ] name="ether1-oob-mgmt" disabled=no
 /interface ethernet set [ find default-name=sfp-sfpplus1 ] disabled=yes
 /interface ethernet set [ find default-name=sfp-sfpplus2 ] disabled=yes
-/interface ethernet set [ find default-name=sfp-sfpplus3 ] name="sfp-sfpplus3-wan" disabled=no
+/interface ethernet set [ find default-name=sfp-sfpplus3 ] disabled=yes
 /interface ethernet set [ find default-name=sfp-sfpplus4 ] disabled=yes
 /interface ethernet set [ find default-name=sfp-sfpplus5 ] disabled=yes
 /interface ethernet set [ find default-name=sfp-sfpplus6 ] disabled=yes
@@ -42,7 +43,7 @@
 /interface ethernet set [ find default-name=sfp-sfpplus9 ] disabled=yes
 /interface ethernet set [ find default-name=sfp-sfpplus10 ] disabled=yes
 /interface ethernet set [ find default-name=sfp-sfpplus11 ] disabled=yes
-/interface ethernet set [ find default-name=sfp-sfpplus12 ] comment="TEMP: desktop DAC until switch" disabled=no
+/interface ethernet set [ find default-name=sfp-sfpplus12 ] disabled=yes
 /interface ethernet set [ find default-name=sfp28-1 ] name="sfp28-1-trunk" disabled=no
 /interface ethernet set [ find default-name=sfp28-2 ] disabled=yes
 
@@ -50,8 +51,11 @@
 # WAN settings
 #######################################
 
+# NOTE: if you're going to move the WAN connection to a different interface, release DHCP first!
+
 # WAN DHCP client to pick up IP Address from the ISP
-/ip dhcp-client add interface="sfp-sfpplus3-wan" name="wan-dhcp" use-peer-dns=no use-peer-ntp=no
+/interface vlan add interface="sfp28-1-trunk" name="wan-vlan" vlan-id=2
+/ip dhcp-client add interface="wan-vlan" name="wan-dhcp" use-peer-dns=no use-peer-ntp=no
 
 #######################################
 # IP Services
@@ -65,14 +69,7 @@
 /interface list add name="vlan"
 /interface list add name="mgmt"
 
-/interface list member add interface="sfp-sfpplus3-wan" list="wan"
-
-# TEMP: desktop DAC until switch
-/ip address add interface="sfp-sfpplus12" address=10.0.0.1/30 comment="TEMP: desktop DAC until switch"
-/interface list member add interface="sfp-sfpplus12" list="vlan" comment="TEMP: desktop DAC until switch"
-/ip pool add name="temp-pool" ranges=10.0.0.2 comment="TEMP: desktop DAC until switch"
-/ip dhcp-server add interface="sfp-sfpplus12" name="temp-dhcp" address-pool="temp-pool" comment="TEMP: desktop DAC until switch"
-/ip dhcp-server network add address=10.0.0.0/30 dns-server=10.0.0.1 gateway=10.0.0.1 comment="TEMP: desktop DAC until switch"
+/interface list member add interface="wan-vlan" list="wan"
 
 # Guest VLAN creation, IP assignment, and DHCP service
 /interface vlan add interface="sfp28-1-trunk" name="guest-vlan" vlan-id=10
@@ -117,7 +114,7 @@
 # Mgmt VLAN creation, IP assignment, and DHCP service
 /interface vlan add interface="sfp28-1-trunk" name="mgmt-vlan" vlan-id=99
 /ip address add interface="mgmt-vlan" address=10.0.99.1/29
-/ip pool add name="mgmt-pool" ranges=10.0.99.2-10.0.99.6
+/ip pool add name="mgmt-pool" ranges=10.0.99.4-10.0.99.6
 /ip dhcp-server add interface="mgmt-vlan" name="mgmt-dhcp" address-pool="mgmt-pool"
 /ip dhcp-server network add address=10.0.99.0/29 dns-server=10.0.99.1 gateway=10.0.99.1
 /interface list member add interface="mgmt-vlan" list="vlan"
