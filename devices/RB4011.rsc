@@ -148,7 +148,7 @@ add chain=input action=drop comment="Drop all other input traffic"
 #######################################
 
 /ip ssh set strong-crypto=yes
-/ip service set ssh address=10.0.99.0/29
+/ip service set ssh available-from=10.0.99.0/29
 
 # Disable unused services
 /ip service disable telnet,ftp,www,www-ssl,reverse-proxy,api,api-ssl
