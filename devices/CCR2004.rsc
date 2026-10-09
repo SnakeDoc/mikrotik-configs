@@ -1,5 +1,5 @@
 ###############################################################################
-# Configuration for CCR2004-1G-12S+2XS RouterOS 7.x
+# Configuration for CCR2004-1G-12S+2XS RouterOS 7.x - Router
 #
 # Start with a system reset. Upload CCR2004.rsc, then run the following:
 #
