@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # renovate: datasource=github-releases depName=jdx/mise
 ARG MISE_VERSION=v2026.10.12
 # renovate: datasource=github-releases depName=starship/starship
-ARG STARSHIP_VERSION=v1.26.0
+ARG STARSHIP_VERSION=v1.27.0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
